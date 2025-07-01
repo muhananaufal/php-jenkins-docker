@@ -7,7 +7,7 @@ pipeline {
                 echo 'Mulai proses clone...'
                 // Jenkins otomatis melakukan clone saat menggunakan 'Pipeline script from SCM'
                 // Langkah git di sini bersifat eksplisit untuk kejelasan alur.
-                git 'https://github.com/muhananaufal/php-jenkins-docker.git'
+                git branch: 'main', url: 'https://github.com/muhananaufal/php-jenkins-docker.git'
                 echo 'Clone repository berhasil.'
             }
         }
