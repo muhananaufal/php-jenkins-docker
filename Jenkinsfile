@@ -16,7 +16,7 @@ pipeline {
             steps {
                 echo 'Menginstall dependensi via Composer...'
                 // Menggunakan sh untuk menjalankan perintah di shell agent Jenkins
-                sh 'composer install'
+                sh 'docker run --rm -v $(pwd):/app composer/composer install'
                 echo 'Dependensi berhasil diinstall.'
             }
         }
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 echo 'Menjalankan unit tests...'
                 // Menjalankan PHPUnit dari folder vendor
-                sh './vendor/bin/phpunit tests/SimpleTest.php'
+                sh 'docker run --rm -v $(pwd):/app -w /app php:8.0-cli ./vendor/bin/phpunit tests/SimpleTest.php'
                 echo 'Unit tests selesai.'
             }
         }
@@ -47,9 +47,9 @@ pipeline {
                 sh 'docker rm php-app-container || true'
 
                 // Jalankan container baru dari image yang telah di-build
-                // Memetakan port 8081 di host ke port 80 di container
-                sh 'docker run -d --name php-app-container -p 8081:80 php-app:latest'
-                echo 'Aplikasi berhasil di-deploy dan berjalan di port 8081.'
+                // Memetakan port 8083 di host ke port 80 di container
+                sh 'docker run -d --name php-app-container -p 8083:80 php-app:latest'
+                echo 'Aplikasi berhasil di-deploy dan berjalan di port 8083.'
             }
         }
     }
