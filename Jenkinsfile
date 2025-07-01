@@ -1,5 +1,12 @@
 pipeline {
-    agent any
+    // Jalankan seluruh pipeline di dalam sebuah container Docker
+    // yang sudah memiliki Docker client terinstal.
+    agent {
+        docker {
+            image 'docker:20.10.17' // Menggunakan image Docker resmi yang berisi CLI
+            args '-v /var/run/docker.sock:/var/run/docker.sock' // Memberi akses ke Docker socket host
+        }
+    }
 
     stages {
         stage('1. Clone Repository') {
@@ -16,7 +23,7 @@ pipeline {
             steps {
                 echo 'Menginstall dependensi via Composer...'
                 // Menggunakan sh untuk menjalankan perintah di shell agent Jenkins
-                sh 'docker run --rm -v $(pwd):/app composer/composer install'
+                sh 'docker run --rm -v "$(pwd)":/app -w /app composer/composer install'
                 echo 'Dependensi berhasil diinstall.'
             }
         }
@@ -25,7 +32,7 @@ pipeline {
             steps {
                 echo 'Menjalankan unit tests...'
                 // Menjalankan PHPUnit dari folder vendor
-                sh 'docker run --rm -v $(pwd):/app -w /app php:8.0-cli ./vendor/bin/phpunit tests/SimpleTest.php'
+                sh 'docker run --rm -v "$(pwd)":/app -w /app php:8.0-cli ./vendor/bin/phpunit tests/SimpleTest.php'
                 echo 'Unit tests selesai.'
             }
         }
